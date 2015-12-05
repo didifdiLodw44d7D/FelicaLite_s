@@ -39,6 +39,8 @@ public:
 	afx_msg void OnBnClickedWrite();
 	afx_msg void OnBnClickedRead();
 	CEdit mEdit;
+	CEdit mInputBox;
+	CComboBox mBlock;
 };
 
 

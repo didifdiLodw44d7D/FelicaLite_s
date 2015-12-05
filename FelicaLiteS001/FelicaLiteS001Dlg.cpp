@@ -52,6 +52,7 @@ END_MESSAGE_MAP()
 CFelicaLiteS001Dlg::CFelicaLiteS001Dlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_FELICALITES001_DIALOG, pParent)
 	//, mEditbox(_T(""))
+	//, mInputValue(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -60,6 +61,8 @@ void CFelicaLiteS001Dlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_EDIT1, mEdit);
+	DDX_Control(pDX, IDC_EDIT2, mInputBox);
+	DDX_Control(pDX, IDC_COMBO1, mBlock);
 }
 
 BEGIN_MESSAGE_MAP(CFelicaLiteS001Dlg, CDialogEx)
@@ -185,19 +188,25 @@ HCURSOR CFelicaLiteS001Dlg::OnQueryDragIcon()
 void CFelicaLiteS001Dlg::OnBnClickedWrite()
 {
 	// TODO: ここにコントロール通知ハンドラー コードを追加します。
-	unsigned char pDataW[16] =
-	{
-		0x0A, 0x0B, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-	};
 
+	CString str;
+	mInputBox.GetWindowTextA(str);
+
+	char *p = new char[16+1];
+	memset(p, 0, 16+1);
+	strcpy(p, str);
+
+	CString blockNum;
+	mBlock.GetWindowTextA(blockNum);
+	int iBlock = _ttoi(blockNum.GetBuffer(0));
 
 	char *po = (char *)malloc(sizeof(char) * 5120);
 	FelicaRW *fRW = new FelicaRW(po);
-	fRW->FelicaRW_main(0, pDataW, false);
+	fRW->FelicaRW_main(iBlock, (unsigned char*)p, false);
 
 	mEdit.SetWindowTextA((LPCTSTR)po);
 
+	delete[] p;
 	delete(fRW);
 	free(po);
 }
